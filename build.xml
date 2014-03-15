@@ -20,12 +20,16 @@
 	</target>
 
 	<target name="dist" depends="compile"
-		description="Create WAR file for binary distribution">
+		description="Create jar file for binary distribution">
 		<jar jarfile="${jar.file}.jar" basedir="${build.dir}" />
 	</target>
 	
-	<target name="build" depends="compile,dist"
+	<target name="build" depends="dist"
 		description="Builds the project and generate a jar">
+	</target>
+	
+	<target name="run" depends="build">
+	    <java classname="ist.meic.pa.test.Main" dir="${build.dir}" fork="true"></java>
 	</target>
 
 </project> 
