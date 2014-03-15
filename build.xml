@@ -1,0 +1,31 @@
+<project name="PAva-Java-Inspector" default="build" basedir=".">
+
+	<property name="src.dir" value="src" />
+	<property name="build.dir" value="bin" />
+	<property name="jar.file" value="inspector" />
+	
+	<target name="prepare" depends="clean" description="Create working dirs">
+		<mkdir dir="${build.dir}" />
+	</target>
+
+	<target name="clean" description="Delete old work and dist directories">
+		<delete dir="${build.dir}" />
+	</target>
+
+	<target name="compile"
+		description="Compile Java sources and copy to WEB-INF/classes dir"
+		depends="prepare">
+		<javac includeantruntime="false" srcdir="${src.dir}" destdir="${build.dir}">
+		</javac>
+	</target>
+
+	<target name="dist" depends="compile"
+		description="Create WAR file for binary distribution">
+		<jar jarfile="${jar.file}.jar" basedir="${build.dir}" />
+	</target>
+	
+	<target name="build" depends="compile,dist"
+		description="Builds the project and generate a jar">
+	</target>
+
+</project> 
