@@ -1,25 +1,27 @@
 package ist.meic.pa;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 
 /**
- * The Class Inspector. Can be started from any point of a Java program, 
- * accepting as argument an object that should be inspected. The inspector 
- * must be started using the following form: new ist.meic.pa.Inspector().
+ * The Class Inspector. Can be started from any point of a Java program,
+ * accepting as argument an object that should be inspected. The inspector must
+ * be started using the following form: new ist.meic.pa.Inspector().
  * inspect(object)
  */
 public class Inspector {
-	
+
 	/**
 	 * Instantiates a new inspector.
 	 */
-	public Inspector() { }
-	
+	public Inspector() {
+	}
+
 	/**
-	 * Presents all the relevant features of the object, namely: The class of 
-	 * the object; The name, type and current value of each of the object's 
-	 * fields; Plus other features we deemed important.
-	 * Then provides a simple read-eval-print interface for further inspection.
+	 * Presents all the relevant features of the object, namely: The class of
+	 * the object; The name, type and current value of each of the object's
+	 * fields; Plus other features we deemed important. Then provides a simple
+	 * read-eval-print interface for further inspection.
 	 */
 	public void inspect(Object object) {
 		Class<? extends Object> c = object.getClass();
@@ -32,5 +34,19 @@ public class Inspector {
 			//TODO: print print value
 		}
 		Console.readEvalPrint();
+	}
+
+	/*
+	 * Similar to a Modifier toString. Returns null, if no modifier is found.
+	 */
+	private String getModifierString(int modifiers) {
+		if (Modifier.isPrivate(modifiers)) {
+			return "private";
+		} else if (Modifier.isProtected(modifiers)) {
+			return "protected";
+		} else if (Modifier.isPublic(modifiers)) {
+			return "public";
+		} else
+			return null;
 	}
 }
