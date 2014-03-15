@@ -20,6 +20,6 @@ public class Inspector {
 	 * Then provides a simple read-eval-print interface for further inspection.
 	 */
 	public void inspect(Object object) {
-		;
+		Console.readEvalPrint();
 	}
 }
