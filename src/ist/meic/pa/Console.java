@@ -37,11 +37,15 @@ public class Console {
 					} catch (NoSuchFieldException e) {
 						System.err.println("No such field " + fieldName);
 					} catch (SecurityException e) {
-						System.err.println("Security exception while accessing " + fieldName);
+						System.err
+								.println("Security exception while accessing "
+										+ fieldName);
 					} catch (IllegalArgumentException e) {
-						System.err.println("Illegal argument while accessing " + fieldName);
+						System.err.println("Illegal argument while accessing "
+								+ fieldName);
 					} catch (IllegalAccessException e) {
-						System.err.println("Illegal access while accessing "+ fieldName);
+						System.err.println("Illegal access while accessing "
+								+ fieldName);
 					}
 				} else {
 					System.err.println("Correct use of i: i <name>");
@@ -52,6 +56,34 @@ public class Console {
 					/* Modifies the value of the field */
 					String fieldName = cmd[1];
 					String newValue = cmd[2];
+
+					try {
+						Field field = inspector.getFieldByName(fieldName);
+						/* Check which type to parse the value to */
+						if (field.getType() == boolean.class) {
+							field.set(inspector.getObject(),
+									Boolean.parseBoolean(newValue));
+						} else if (field.getType() == int.class
+								|| field.getType() == short.class
+								|| field.getType() == long.class) {
+							field.set(inspector.getObject(),
+									Integer.parseInt(newValue));
+						} else {
+							field.set(inspector.getObject(), newValue);
+						}
+					} catch (NoSuchFieldException e) {
+						System.err.println("No such field " + fieldName);
+					} catch (SecurityException e) {
+						System.err
+								.println("Security exception while accessing "
+										+ fieldName);
+					} catch (IllegalArgumentException e) {
+						System.err.println("Illegal argument while accessing "
+								+ fieldName);
+					} catch (IllegalAccessException e) {
+						System.err.println("Illegal access while accessing "
+								+ fieldName);
+					}
 				} else {
 					System.err.println("Correct use of m: m <name> <value>");
 				}
