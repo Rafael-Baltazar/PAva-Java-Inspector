@@ -1,6 +1,7 @@
 package ist.meic.pa;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Map;
@@ -14,7 +15,6 @@ import java.util.Map;
 public class Inspector {
 
 	private Object object;
-
 	private Map<String, Field> objectFields;
 
 	/**
@@ -45,7 +45,7 @@ public class Inspector {
 
 		Console.readEvalPrint(this);
 	}
-	
+
 	public void printInspection() {
 		System.err.println(object.getClass().getName() + "@"
 				+ Integer.toHexString(object.hashCode())
@@ -112,7 +112,28 @@ public class Inspector {
 			}
 			c = c.getSuperclass();
 		}
-
 		return fields;
+	}
+
+	/*
+	 * Fetch the best method given the receiver, the method's name and an array
+	 * of values. Returns null, if none is found. Currently, only works for
+	 * integers as args.
+	 */
+	public Method getBestMethod(Object receiver, String methodName,
+			Class<?>[] parameterTypes) {
+		Method bestMethod = null;
+
+		Class<? extends Object> c = receiver.getClass();
+		while (c != null) {
+			try {
+				bestMethod = c.getDeclaredMethod(methodName, parameterTypes);
+				break;
+			} catch (NoSuchMethodException e) {
+			} catch (SecurityException e) {
+			}
+			c = c.getSuperclass();
+		}
+		return bestMethod;
 	}
 }

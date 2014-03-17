@@ -4,6 +4,10 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Console {
 	public static void readEvalPrint(Inspector inspector) {
@@ -31,6 +35,8 @@ public class Console {
 					String fieldName = cmd[1];
 					try {
 						Field field = inspector.getFieldByName(fieldName);
+						if (field == null)
+							throw new NoSuchFieldException();
 						Object object = field.get(inspector.getObject());
 						System.err.println(inspector.inspectField(field));
 						inspector.setCurrentInspectedObject(object);
@@ -59,6 +65,8 @@ public class Console {
 
 					try {
 						Field field = inspector.getFieldByName(fieldName);
+						if (field == null)
+							throw new NoSuchFieldException();
 						/* Check which type to parse the value to */
 						if (field.getType() == boolean.class) {
 							field.set(inspector.getObject(),
@@ -91,7 +99,41 @@ public class Console {
 			case "c":
 				if (cmd.length > 1) {
 					/* Calls method c from the current inspected object */
-					;
+					String methodName = cmd[1];
+					List<Object> args = new ArrayList<Object>();
+					List<Class<?>> parameterTypes = new ArrayList<Class<?>>();
+
+					for (int i = 2; i < cmd.length; i++) {
+						Integer value = Integer.parseInt(cmd[i]);
+						args.add(value);
+						parameterTypes.add(value.getClass());
+					}
+					Method m = inspector
+							.getBestMethod(inspector.getObject(), methodName,
+									parameterTypes.toArray(new Class<?>[0]));
+					if(m == null) {
+						System.err.println("No such method " + methodName);
+						break;
+					}
+					System.err.println(m.getName());
+					if (m != null) {
+						try {
+							System.err.println(m.invoke(inspector.getObject(),
+									args.toArray()));
+						} catch (IllegalAccessException e) {
+							System.err
+									.println("Illegal access when invoking method "
+											+ m.getName());
+						} catch (IllegalArgumentException e) {
+							System.err
+									.println("Illegal argument when invoking method "
+											+ m.getName());
+						} catch (InvocationTargetException e) {
+							System.err
+									.println("Invocation target when invoking method "
+											+ m.getName());
+						}
+					}
 				} else {
 					System.err
 							.println("Correct use of c: c <name> [<value 0> ... <value n>]");
