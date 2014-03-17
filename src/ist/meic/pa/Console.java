@@ -3,13 +3,15 @@ package ist.meic.pa;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.lang.reflect.Field;
 
 public class Console {
-	public static void readEvalPrint() {
+	public static void readEvalPrint(Inspector inspector) {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		while (true) {
 			String line = "";
 			try {
+				System.err.print(" >: ");
 				line = br.readLine();
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -27,6 +29,20 @@ public class Console {
 					 * inspected object
 					 */
 					String fieldName = cmd[1];
+					try {
+						Field field = inspector.getFieldByName(fieldName);
+						Object object = field.get(inspector.getObject());
+						System.err.println(inspector.inspectField(field));
+						inspector.setCurrentInspectedObject(object);
+					} catch (NoSuchFieldException e) {
+						System.err.println("No such field " + fieldName);
+					} catch (SecurityException e) {
+						System.err.println("Security exception while accessing " + fieldName);
+					} catch (IllegalArgumentException e) {
+						System.err.println("Illegal argument while accessing " + fieldName);
+					} catch (IllegalAccessException e) {
+						System.err.println("Illegal access while accessing "+ fieldName);
+					}
 				} else {
 					System.err.println("Correct use of i: i <name>");
 				}
@@ -52,6 +68,7 @@ public class Console {
 			default:
 				System.err.println("Command not recognized.");
 			}
+			inspector.printInspection();
 		}
 	}
 }
