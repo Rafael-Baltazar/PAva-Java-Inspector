@@ -47,7 +47,9 @@ public class Inspector {
 	}
 	
 	public void printInspection() {
-		System.err.println(object + " is an instance of " + object.getClass().getName());
+		System.err.println(object.getClass().getName() + "@"
+				+ Integer.toHexString(object.hashCode())
+				+ " is an instance of " + object.getClass().getName());
 		System.err.println("----------");
 
 		for (Field f : objectFields.values()) {
