@@ -37,6 +37,8 @@ public class Inspector {
 	 * the object; The name, type and current value of each of the object's
 	 * fields; Plus other features we deemed important. Then provides a simple
 	 * read-eval-print interface for further inspection.
+	 *
+	 * @param object the object
 	 */
 	public void inspect(Object object) {
 		setCurrentInspectedObject(object);
@@ -46,6 +48,10 @@ public class Inspector {
 		Console.readEvalPrint(this);
 	}
 
+	/**
+	 * Prints the instance, class name and the inspection of each field of the
+	 * current inspected object.
+	 */
 	public void printInspection() {
 		System.err.println(object.getClass().getName() + "@"
 				+ Integer.toHexString(object.hashCode())
@@ -70,8 +76,11 @@ public class Inspector {
 		return this.objectFields.get(fieldName);
 	}
 
-	/*
+	/**
 	 * Similar to a Modifier toString. Returns null, if no modifier is found.
+	 *
+	 * @param modifiers the modifiers
+	 * @return the modifier string
 	 */
 	private String getModifierString(int modifiers) {
 		if (Modifier.isPrivate(modifiers)) {
@@ -115,10 +124,15 @@ public class Inspector {
 		return fields;
 	}
 
-	/*
+	/**
 	 * Fetch the best method given the receiver, the method's name and an array
 	 * of values. Returns null, if none is found. Currently, only works for
 	 * integers as args.
+	 *
+	 * @param receiver the receiver
+	 * @param methodName the method name
+	 * @param parameterTypes the parameter types
+	 * @return the best method
 	 */
 	public Method getBestMethod(Object receiver, String methodName,
 			Class<?>[] parameterTypes) {

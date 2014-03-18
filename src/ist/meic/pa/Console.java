@@ -98,7 +98,10 @@ public class Console {
 				break;
 			case "c":
 				if (cmd.length > 1) {
-					/* Calls method c from the current inspected object */
+					/*
+					 * Calls method c from the current inspected object and
+					 * inspects the returned value
+					 */
 					String methodName = cmd[1];
 					List<Object> args = new ArrayList<Object>();
 					List<Class<?>> parameterTypes = new ArrayList<Class<?>>();
@@ -106,20 +109,25 @@ public class Console {
 					for (int i = 2; i < cmd.length; i++) {
 						Integer value = Integer.parseInt(cmd[i]);
 						args.add(value);
-						parameterTypes.add(value.getClass());
+						parameterTypes.add(int.class);
 					}
 					Method m = inspector
 							.getBestMethod(inspector.getObject(), methodName,
 									parameterTypes.toArray(new Class<?>[0]));
-					if(m == null) {
+					if (m == null) {
 						System.err.println("No such method " + methodName);
-						break;
-					}
-					System.err.println(m.getName());
-					if (m != null) {
+					} else {
 						try {
-							System.err.println(m.invoke(inspector.getObject(),
-									args.toArray()));
+							Object result = m.invoke(inspector.getObject(),
+									args.toArray());
+							if (result != null) {
+//								Object currentObject = inspector.getObject();
+//								inspector.setCurrentInspectedObject(result);
+//								inspector.printInspection();
+//								inspector
+//										.setCurrentInspectedObject(currentObject);
+								System.err.println(result);
+							}
 						} catch (IllegalAccessException e) {
 							System.err
 									.println("Illegal access when invoking method "
