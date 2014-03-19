@@ -36,6 +36,7 @@ public class Console {
 			case "m":
 				if (cmd.length == 3) {
 					modifyField(inspector, cmd);
+					inspector.printInspection();
 				} else {
 					System.err.println("Correct use of m: m <name> <value>");
 				}
@@ -51,7 +52,7 @@ public class Console {
 			default:
 				System.err.println("Command not recognized.");
 			}
-			inspector.printInspection();
+			
 		}
 	}
 
@@ -95,8 +96,8 @@ public class Console {
 				System.err.println(field.get(inspector.getObject()));
 			} else {
 				Object object = field.get(inspector.getObject());
-				System.err.println(inspector.inspectField(field));
 				inspector.setCurrentInspectedObject(object);
+				inspector.printInspection();
 			}
 		} catch (NoSuchFieldException e) {
 			System.err.println("No such field " + fieldName);
