@@ -52,7 +52,7 @@ public class Console {
 			default:
 				System.err.println("Command not recognized.");
 			}
-			
+
 		}
 	}
 
@@ -63,15 +63,13 @@ public class Console {
 	 *            the field to be checked
 	 */
 	private static boolean isPrimitive(Field field) {
-		return (field.getType() == int.class 
-				|| field.getType() == float.class
+		return (field.getType() == int.class || field.getType() == float.class
 				|| field.getType() == boolean.class
 				|| field.getType() == short.class
 				|| field.getType() == long.class
 				|| field.getType() == byte.class
 				|| field.getType() == char.class
-				|| field.getType() == double.class 
-				|| field.getType() == void.class);
+				|| field.getType() == double.class || field.getType() == void.class);
 	}
 
 	/**
@@ -91,7 +89,7 @@ public class Console {
 			if (field == null) {
 				throw new NoSuchFieldException();
 			}
-			
+
 			if (isPrimitive(field)) {
 				System.err.println(field.get(inspector.getObject()));
 			} else {
@@ -184,10 +182,12 @@ public class Console {
 			/* Check which type to parse the value to */
 			if (field.getType() == boolean.class) {
 				field.set(inspector.getObject(), Boolean.parseBoolean(newValue));
-			} else if (field.getType() == int.class
-					|| field.getType() == short.class
-					|| field.getType() == long.class) {
+			} else if (field.getType() == int.class) {
 				field.set(inspector.getObject(), Integer.parseInt(newValue));
+			} else if (field.getType() == short.class) {
+				field.set(inspector.getObject(), Short.parseShort(newValue));
+			} else if (field.getType() == long.class) {
+				field.set(inspector.getObject(), Long.parseLong(newValue));
 			} else {
 				field.set(inspector.getObject(), newValue);
 			}
