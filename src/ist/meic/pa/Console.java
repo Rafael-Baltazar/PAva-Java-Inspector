@@ -28,33 +28,7 @@ public class Console {
 				return;
 			case "i":
 				if (cmd.length == 2) {
-					/*
-					 * Inspects the field of the object and makes it the current
-					 * inspected object
-					 */
-					String fieldName = cmd[1];
-					try {
-						Field field = inspector.getFieldByName(fieldName);
-						if (field == null)
-							throw new NoSuchFieldException();
-						Object object = field.get(inspector.getObject());
-						System.err.println(inspector.inspectField(field));
-						inspector.setCurrentInspectedObject(object);
-					} catch (NoSuchFieldException e) {
-						System.err.println("No such field " + fieldName);
-					} catch (SecurityException e) {
-						System.err
-								.println("Error: Security exception while accessing "
-										+ fieldName);
-					} catch (IllegalArgumentException e) {
-						System.err
-								.println("Error: Illegal argument while accessing "
-										+ fieldName);
-					} catch (IllegalAccessException e) {
-						System.err
-								.println("Error: Illegal access while accessing "
-										+ fieldName);
-					}
+					inspectField(inspector, cmd);
 				} else {
 					System.err.println("Correct use of i: i <name>");
 				}
@@ -68,51 +42,7 @@ public class Console {
 				break;
 			case "c":
 				if (cmd.length > 1) {
-					/*
-					 * Calls method c from the current inspected object and
-					 * inspects the returned value
-					 */
-					String methodName = cmd[1];
-					List<Object> args = new ArrayList<Object>();
-					List<Class<?>> parameterTypes = new ArrayList<Class<?>>();
-
-					for (int i = 2; i < cmd.length; i++) {
-						Integer value = Integer.parseInt(cmd[i]);
-						args.add(value);
-						parameterTypes.add(int.class);
-					}
-					Method m = inspector
-							.getBestMethod(inspector.getObject(), methodName,
-									parameterTypes.toArray(new Class<?>[0]));
-					if (m == null) {
-						System.err.println("Error: No such method with name "
-								+ methodName);
-					} else {
-						try {
-							Object result = m.invoke(inspector.getObject(),
-									args.toArray());
-							if (result != null) {
-								// Object currentObject = inspector.getObject();
-								// inspector.setCurrentInspectedObject(result);
-								// inspector.printInspection();
-								// inspector
-								// .setCurrentInspectedObject(currentObject);
-								System.err.println(result);
-							}
-						} catch (IllegalAccessException e) {
-							System.err
-									.println("Error: Illegal access when invoking method "
-											+ m.getName());
-						} catch (IllegalArgumentException e) {
-							System.err
-									.println("Error: Illegal argument when invoking method "
-											+ m.getName());
-						} catch (InvocationTargetException e) {
-							System.err
-									.println("Error: Invocation target when invoking method "
-											+ m.getName());
-						}
-					}
+					callMethod(inspector, cmd);
 				} else {
 					System.err
 							.println("Correct use of c: c <name> [<value 0> ... <value n>]");
@@ -125,12 +55,98 @@ public class Console {
 		}
 	}
 
-	/*
+	/**
+	 * Inspects the field of the object and makes it the current inspected
+	 * object
+	 * 
+	 * @param inspector
+	 *            inspector the inspector that contains the object to be
+	 *            modified
+	 * @param cmd
+	 *            the array of options/values
+	 */
+	private static void inspectField(Inspector inspector, String[] cmd) {
+		String fieldName = cmd[1];
+		try {
+			Field field = inspector.getFieldByName(fieldName);
+			if (field == null)
+				throw new NoSuchFieldException();
+			Object object = field.get(inspector.getObject());
+			System.err.println(inspector.inspectField(field));
+			inspector.setCurrentInspectedObject(object);
+		} catch (NoSuchFieldException e) {
+			System.err.println("No such field " + fieldName);
+		} catch (SecurityException e) {
+			System.err.println("Error: Security exception while accessing "
+					+ fieldName);
+		} catch (IllegalArgumentException e) {
+			System.err.println("Error: Illegal argument while accessing "
+					+ fieldName);
+		} catch (IllegalAccessException e) {
+			System.err.println("Error: Illegal access while accessing "
+					+ fieldName);
+		}
+	}
+
+	/**
+	 * Calls method c from the current inspected object and inspects the
+	 * returned value
+	 * 
+	 * @param inspector
+	 *            the inspector that contains the object to be modified
+	 * @param cmd
+	 *            the array of options/values
+	 */
+	private static void callMethod(Inspector inspector, String[] cmd) {
+		String methodName = cmd[1];
+		List<Object> args = new ArrayList<Object>();
+		List<Class<?>> parameterTypes = new ArrayList<Class<?>>();
+
+		for (int i = 2; i < cmd.length; i++) {
+			Integer value = Integer.parseInt(cmd[i]);
+			args.add(value);
+			parameterTypes.add(int.class);
+		}
+		Method m = inspector.getBestMethod(inspector.getObject(), methodName,
+				parameterTypes.toArray(new Class<?>[0]));
+		if (m == null) {
+			System.err.println("Error: No such method with name " + methodName);
+		} else {
+			try {
+				Object result = m.invoke(inspector.getObject(), args.toArray());
+				if (result != null) {
+					// Object currentObject = inspector.getObject();
+					// inspector.setCurrentInspectedObject(result);
+					// inspector.printInspection();
+					// inspector
+					// .setCurrentInspectedObject(currentObject);
+					System.err.println(result);
+				}
+			} catch (IllegalAccessException e) {
+				System.err
+						.println("Error: Illegal access when invoking method "
+								+ m.getName());
+			} catch (IllegalArgumentException e) {
+				System.err
+						.println("Error: Illegal argument when invoking method "
+								+ m.getName());
+			} catch (InvocationTargetException e) {
+				System.err
+						.println("Error: Invocation target when invoking method "
+								+ m.getName());
+			}
+		}
+	}
+
+	/**
 	 * Modifies the value of a field of an instance of some class that the
 	 * inspector is inspecting.
 	 * 
-	 * @param inspector the inspector that contains the object to be modified
-	 * @param cmd the array of options/values
+	 * @param inspector
+	 *            the inspector that contains the object to be modified
+	 * 
+	 * @param cmd
+	 *            the array of options/values
 	 */
 	private static void modifyField(Inspector inspector, String[] cmd) {
 		/* Modifies the value of the field */
