@@ -18,7 +18,6 @@ public class Console {
 				System.err.print(" >: ");
 				line = br.readLine();
 			} catch (IOException e) {
-				e.printStackTrace();
 				System.err.println("Error reading from input.");
 				continue;
 			}
@@ -52,26 +51,24 @@ public class Console {
 			default:
 				System.err.println("Command not recognized.");
 			}
-			
+
 		}
 	}
 
 	/**
-	 * Check if the type of a given field is primitive or not
+	 * Check if the given type is primitive or not
 	 * 
-	 * @param field
+	 * @param type
 	 *            the field to be checked
 	 */
-	private static boolean isPrimitive(Field field) {
-		return (field.getType() == int.class 
-				|| field.getType() == float.class
-				|| field.getType() == boolean.class
-				|| field.getType() == short.class
-				|| field.getType() == long.class
-				|| field.getType() == byte.class
-				|| field.getType() == char.class
-				|| field.getType() == double.class 
-				|| field.getType() == void.class);
+	private static boolean isPrimitive(Class<?> type) {
+		return (type == int.class || type == float.class
+				|| type == boolean.class
+				|| type == short.class
+				|| type == long.class
+				|| type == byte.class
+				|| type == char.class
+				|| type == double.class || type == void.class);
 	}
 
 	/**
@@ -91,8 +88,8 @@ public class Console {
 			if (field == null) {
 				throw new NoSuchFieldException();
 			}
-			
-			if (isPrimitive(field)) {
+
+			if (isPrimitive(field.getType())) {
 				System.err.println(field.get(inspector.getObject()));
 			} else {
 				Object object = field.get(inspector.getObject());
@@ -140,12 +137,14 @@ public class Console {
 			try {
 				Object result = m.invoke(inspector.getObject(), args.toArray());
 				if (result != null) {
-					// Object currentObject = inspector.getObject();
-					// inspector.setCurrentInspectedObject(result);
-					// inspector.printInspection();
-					// inspector
-					// .setCurrentInspectedObject(currentObject);
-					System.err.println(result);
+					if (isPrimitive(m.getReturnType())) {
+						System.err.println(result);
+					} else {
+						Object currentObject = inspector.getObject();
+						inspector.setCurrentInspectedObject(result);
+						inspector.printInspection();
+						inspector.setCurrentInspectedObject(currentObject);
+					}
 				}
 			} catch (IllegalAccessException e) {
 				System.err

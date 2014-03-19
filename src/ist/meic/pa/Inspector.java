@@ -37,8 +37,9 @@ public class Inspector {
 	 * the object; The name, type and current value of each of the object's
 	 * fields; Plus other features we deemed important. Then provides a simple
 	 * read-eval-print interface for further inspection.
-	 *
-	 * @param object the object
+	 * 
+	 * @param object
+	 *            the object
 	 */
 	public void inspect(Object object) {
 		setCurrentInspectedObject(object);
@@ -62,8 +63,9 @@ public class Inspector {
 			try {
 				System.err.println(inspectField(f));
 			} catch (IllegalArgumentException e) {
-				System.err.println("Error: Illegal argument at inspecting field "
-						+ f.getName());
+				System.err
+						.println("Error: Illegal argument at inspecting field "
+								+ f.getName());
 			} catch (IllegalAccessException e) {
 				System.err.println("Error: Illegal access at inspecting field "
 						+ f.getName());
@@ -78,8 +80,9 @@ public class Inspector {
 
 	/**
 	 * Similar to a Modifier toString. Returns null, if no modifier is found.
-	 *
-	 * @param modifiers the modifiers
+	 * 
+	 * @param modifiers
+	 *            the modifiers
 	 * @return the modifier string
 	 */
 	private String getModifierString(int modifiers) {
@@ -113,7 +116,8 @@ public class Inspector {
 		while (c != null) {
 			for (Field f : c.getDeclaredFields()) {
 				try {
-					if (!Modifier.isStatic(f.getModifiers()) && !fields.containsKey(f.getName())) {
+					if (!Modifier.isStatic(f.getModifiers())
+							&& !fields.containsKey(f.getName())) {
 						fields.put(f.getName(), f);
 					}
 				} catch (IllegalArgumentException e) {
@@ -128,28 +132,29 @@ public class Inspector {
 	 * Fetch the best method given the receiver, the method's name and an array
 	 * of values. Returns null, if none is found. Currently, only works for
 	 * integers as args.
-	 *
-	 * @param receiver the receiver
-	 * @param methodName the method name
-	 * @param parameterTypes the parameter types
+	 * 
+	 * @param receiver
+	 *            the receiver
+	 * @param methodName
+	 *            the method name
+	 * @param parameterTypes
+	 *            the parameter types
 	 * @return the best method
 	 */
 	public Method getBestMethod(Object receiver, String methodName,
 			Class<?>[] parameterTypes) {
-		Method bestMethod = null;
-
 		Class<? extends Object> c = receiver.getClass();
+
 		while (c != null) {
 			try {
-				bestMethod = c.getDeclaredMethod(methodName, parameterTypes);
-				break;
+				return c.getDeclaredMethod(methodName, parameterTypes);
 			} catch (NoSuchMethodException e) {
-				
+
 			} catch (SecurityException e) {
-			
+
 			}
 			c = c.getSuperclass();
 		}
-		return bestMethod;
+		return null;
 	}
 }
