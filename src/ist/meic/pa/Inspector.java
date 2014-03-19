@@ -62,10 +62,10 @@ public class Inspector {
 			try {
 				System.err.println(inspectField(f));
 			} catch (IllegalArgumentException e) {
-				System.err.println("Illegal argument at inspecting field "
+				System.err.println("Error: Illegal argument at inspecting field "
 						+ f.getName());
 			} catch (IllegalAccessException e) {
-				System.err.println("Illegal access at inspecting field "
+				System.err.println("Error: Illegal access at inspecting field "
 						+ f.getName());
 			}
 		}
@@ -144,7 +144,9 @@ public class Inspector {
 				bestMethod = c.getDeclaredMethod(methodName, parameterTypes);
 				break;
 			} catch (NoSuchMethodException e) {
+				
 			} catch (SecurityException e) {
+			
 			}
 			c = c.getSuperclass();
 		}
