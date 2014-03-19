@@ -88,7 +88,7 @@ public class Console {
 			if (field == null) {
 				throw new NoSuchFieldException();
 			}
-
+			
 			if (isPrimitive(field.getType())) {
 				System.err.println(field.get(inspector.getObject()));
 			} else {
@@ -183,10 +183,12 @@ public class Console {
 			/* Check which type to parse the value to */
 			if (field.getType() == boolean.class) {
 				field.set(inspector.getObject(), Boolean.parseBoolean(newValue));
-			} else if (field.getType() == int.class
-					|| field.getType() == short.class
-					|| field.getType() == long.class) {
+			} else if (field.getType() == int.class) {
 				field.set(inspector.getObject(), Integer.parseInt(newValue));
+			} else if (field.getType() == short.class) {
+				field.set(inspector.getObject(), Short.parseShort(newValue));
+			} else if (field.getType() == long.class) {
+				field.set(inspector.getObject(), Long.parseLong(newValue));
 			} else {
 				field.set(inspector.getObject(), newValue);
 			}
