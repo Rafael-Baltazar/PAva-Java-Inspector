@@ -189,6 +189,8 @@ public class Console {
 				field.set(inspector.getObject(), Short.parseShort(newValue));
 			} else if (field.getType() == long.class) {
 				field.set(inspector.getObject(), Long.parseLong(newValue));
+			} else if (field.getType() == byte.class) {
+				field.set(inspector.getObject(), Byte.parseByte(newValue));
 			} else {
 				field.set(inspector.getObject(), newValue);
 			}
