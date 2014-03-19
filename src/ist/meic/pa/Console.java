@@ -56,8 +56,26 @@ public class Console {
 	}
 
 	/**
+	 * Check if the type of a given field is primitive or not
+	 * 
+	 * @param field
+	 *            the field to be checked
+	 */
+	private static boolean isPrimitive(Field field) {
+		return (field.getType() == int.class 
+				|| field.getType() == float.class
+				|| field.getType() == boolean.class
+				|| field.getType() == short.class
+				|| field.getType() == long.class
+				|| field.getType() == byte.class
+				|| field.getType() == char.class
+				|| field.getType() == double.class 
+				|| field.getType() == void.class);
+	}
+
+	/**
 	 * Inspects the field of the object and makes it the current inspected
-	 * object
+	 * object as long as its type is not primitive
 	 * 
 	 * @param inspector
 	 *            inspector the inspector that contains the object to be
@@ -69,11 +87,17 @@ public class Console {
 		String fieldName = cmd[1];
 		try {
 			Field field = inspector.getFieldByName(fieldName);
-			if (field == null)
+			if (field == null) {
 				throw new NoSuchFieldException();
-			Object object = field.get(inspector.getObject());
-			System.err.println(inspector.inspectField(field));
-			inspector.setCurrentInspectedObject(object);
+			}
+			
+			if (isPrimitive(field)) {
+				System.err.println(field.get(inspector.getObject()));
+			} else {
+				Object object = field.get(inspector.getObject());
+				System.err.println(inspector.inspectField(field));
+				inspector.setCurrentInspectedObject(object);
+			}
 		} catch (NoSuchFieldException e) {
 			System.err.println("No such field " + fieldName);
 		} catch (SecurityException e) {
@@ -149,7 +173,6 @@ public class Console {
 	 *            the array of options/values
 	 */
 	private static void modifyField(Inspector inspector, String[] cmd) {
-		/* Modifies the value of the field */
 		String fieldName = cmd[1];
 		String newValue = cmd[2];
 
