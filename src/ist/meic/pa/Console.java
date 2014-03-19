@@ -44,14 +44,16 @@ public class Console {
 						System.err.println("No such field " + fieldName);
 					} catch (SecurityException e) {
 						System.err
-								.println("Security exception while accessing "
+								.println("Error: Security exception while accessing "
 										+ fieldName);
 					} catch (IllegalArgumentException e) {
-						System.err.println("Illegal argument while accessing "
-								+ fieldName);
+						System.err
+								.println("Error: Illegal argument while accessing "
+										+ fieldName);
 					} catch (IllegalAccessException e) {
-						System.err.println("Illegal access while accessing "
-								+ fieldName);
+						System.err
+								.println("Error: Illegal access while accessing "
+										+ fieldName);
 					}
 				} else {
 					System.err.println("Correct use of i: i <name>");
@@ -59,39 +61,7 @@ public class Console {
 				break;
 			case "m":
 				if (cmd.length == 3) {
-					/* Modifies the value of the field */
-					String fieldName = cmd[1];
-					String newValue = cmd[2];
-
-					try {
-						Field field = inspector.getFieldByName(fieldName);
-						if (field == null)
-							throw new NoSuchFieldException();
-						/* Check which type to parse the value to */
-						if (field.getType() == boolean.class) {
-							field.set(inspector.getObject(),
-									Boolean.parseBoolean(newValue));
-						} else if (field.getType() == int.class
-								|| field.getType() == short.class
-								|| field.getType() == long.class) {
-							field.set(inspector.getObject(),
-									Integer.parseInt(newValue));
-						} else {
-							field.set(inspector.getObject(), newValue);
-						}
-					} catch (NoSuchFieldException e) {
-						System.err.println("No such field " + fieldName);
-					} catch (SecurityException e) {
-						System.err
-								.println("Security exception while accessing "
-										+ fieldName);
-					} catch (IllegalArgumentException e) {
-						System.err.println("Illegal argument while accessing "
-								+ fieldName);
-					} catch (IllegalAccessException e) {
-						System.err.println("Illegal access while accessing "
-								+ fieldName);
-					}
+					modifyField(inspector, cmd);
 				} else {
 					System.err.println("Correct use of m: m <name> <value>");
 				}
@@ -115,30 +85,31 @@ public class Console {
 							.getBestMethod(inspector.getObject(), methodName,
 									parameterTypes.toArray(new Class<?>[0]));
 					if (m == null) {
-						System.err.println("No such method " + methodName);
+						System.err.println("Error: No such method with name "
+								+ methodName);
 					} else {
 						try {
 							Object result = m.invoke(inspector.getObject(),
 									args.toArray());
 							if (result != null) {
-//								Object currentObject = inspector.getObject();
-//								inspector.setCurrentInspectedObject(result);
-//								inspector.printInspection();
-//								inspector
-//										.setCurrentInspectedObject(currentObject);
+								// Object currentObject = inspector.getObject();
+								// inspector.setCurrentInspectedObject(result);
+								// inspector.printInspection();
+								// inspector
+								// .setCurrentInspectedObject(currentObject);
 								System.err.println(result);
 							}
 						} catch (IllegalAccessException e) {
 							System.err
-									.println("Illegal access when invoking method "
+									.println("Error: Illegal access when invoking method "
 											+ m.getName());
 						} catch (IllegalArgumentException e) {
 							System.err
-									.println("Illegal argument when invoking method "
+									.println("Error: Illegal argument when invoking method "
 											+ m.getName());
 						} catch (InvocationTargetException e) {
 							System.err
-									.println("Invocation target when invoking method "
+									.println("Error: Invocation target when invoking method "
 											+ m.getName());
 						}
 					}
@@ -151,6 +122,46 @@ public class Console {
 				System.err.println("Command not recognized.");
 			}
 			inspector.printInspection();
+		}
+	}
+
+	/*
+	 * Modifies the value of a field of an instance of some class that the
+	 * inspector is inspecting.
+	 * 
+	 * @param inspector the inspector that contains the object to be modified
+	 * @param cmd the array of options/values
+	 */
+	private static void modifyField(Inspector inspector, String[] cmd) {
+		/* Modifies the value of the field */
+		String fieldName = cmd[1];
+		String newValue = cmd[2];
+
+		try {
+			Field field = inspector.getFieldByName(fieldName);
+			if (field == null)
+				throw new NoSuchFieldException();
+			/* Check which type to parse the value to */
+			if (field.getType() == boolean.class) {
+				field.set(inspector.getObject(), Boolean.parseBoolean(newValue));
+			} else if (field.getType() == int.class
+					|| field.getType() == short.class
+					|| field.getType() == long.class) {
+				field.set(inspector.getObject(), Integer.parseInt(newValue));
+			} else {
+				field.set(inspector.getObject(), newValue);
+			}
+		} catch (NoSuchFieldException e) {
+			System.err.println("Error: No such field with name " + fieldName);
+		} catch (SecurityException e) {
+			System.err.println("Error: Security exception while accessing "
+					+ fieldName);
+		} catch (IllegalArgumentException e) {
+			System.err.println("Error: Illegal argument while accessing "
+					+ fieldName);
+		} catch (IllegalAccessException e) {
+			System.err.println("Error: Illegal access while accessing "
+					+ fieldName);
 		}
 	}
 }
