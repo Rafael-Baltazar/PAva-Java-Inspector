@@ -113,7 +113,7 @@ public class Inspector {
 		while (c != null) {
 			for (Field f : c.getDeclaredFields()) {
 				try {
-					if (!Modifier.isStatic(f.getModifiers())) {
+					if (!Modifier.isStatic(f.getModifiers()) && !fields.containsKey(f.getName())) {
 						fields.put(f.getName(), f);
 					}
 				} catch (IllegalArgumentException e) {

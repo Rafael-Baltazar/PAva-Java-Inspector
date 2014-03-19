@@ -1,7 +1,7 @@
 package ist.meic.pa.test;
 
 public class E extends B {
-	boolean f;
+	boolean f = true;
 	
 	public static long i = 10L;
 	
