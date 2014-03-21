@@ -165,7 +165,8 @@ public class Console {
 
 	/**
 	 * Calls method c from the current inspected object and inspects the
-	 * returned value
+	 * returned value. Supported argument types: byte, short, int, long, float,
+	 * double, boolean, char and String.
 	 * 
 	 * @param inspector
 	 *            the inspector that contains the object to be modified
@@ -178,18 +179,54 @@ public class Console {
 		List<Class<?>> parameterTypes = new ArrayList<Class<?>>();
 
 		for (int i = 2; i < cmd.length; i++) {
-			Integer value = Integer.parseInt(cmd[i]);
+			String str = cmd[i];
+			Object value = null;
+			if (str.charAt(0) == 'b') {
+				value = Byte.parseByte(str.substring(1));
+				parameterTypes.add(byte.class);
+			} else if (str.charAt(0) == 's') {
+				value = Short.parseShort(str.substring(1));
+				parameterTypes.add(short.class);
+			} else if (str.charAt(0) == 'i') {
+				value = Integer.parseInt(str.substring(1));
+				parameterTypes.add(int.class);
+			} else if (str.charAt(0) == 'l') {
+				value = Long.parseLong(str.substring(1));
+				parameterTypes.add(long.class);
+			} else if (str.charAt(0) == 'f') {
+				value = Float.parseFloat(str.substring(1));
+				parameterTypes.add(float.class);
+			} else if (str.charAt(0) == 'd') {
+				value = Double.parseDouble(str.substring(1));
+				parameterTypes.add(double.class);
+			} else if (str.charAt(0) == 'f') {
+				value = Boolean.parseBoolean(str.substring(1));
+				parameterTypes.add(boolean.class);
+			} else if (str.charAt(0) == '\'') {
+				value = str.charAt(1);
+				parameterTypes.add(char.class);
+			} else {
+				value = str;
+				parameterTypes.add(String.class);
+			}
 			args.add(value);
-			parameterTypes.add(int.class);
 		}
+		/* Get Best method for the given methodName and parameterTypes */
 		Method m = inspector.getBestMethod(inspector.getObject(), methodName,
 				parameterTypes.toArray(new Class<?>[0]));
 		if (m == null) {
-			System.err.println("Error: No such method with name " + methodName);
+			String parStr = "";
+			for (Class<?> c : parameterTypes) {
+				parStr += c.getName() + " ";
+			}
+			System.err.println("Error: No such method with name " + methodName
+					+ (parStr != "" ? " and parameters " + parStr : ""));
 		} else {
 			try {
+				/* Invoke m */
 				Object result = m.invoke(inspector.getObject(), args.toArray());
 				if (result != null) {
+					/* Print result */
 					if (isPrimitive(m.getReturnType())) {
 						System.err.println(result);
 					} else {
