@@ -6,6 +6,6 @@ public class E extends B {
 	public static long i = 10L;
 	
 	public int g(int h) {
-		return d + h;
+		return new Integer(d + h);
 	}
 }

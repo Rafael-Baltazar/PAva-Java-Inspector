@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,7 +22,13 @@ public class Console {
 				System.err.println("Error reading from input.");
 				continue;
 			}
-			String[] cmd = line.split("\\s+");
+			String[] cmd = null;
+			try {
+				cmd = parseInputLine(line);
+			} catch (ParseException e) {
+				System.err.println(e.getMessage());
+				continue;
+			}
 			switch (cmd[0]) {
 			case "q":
 				return;
@@ -44,15 +51,64 @@ public class Console {
 				if (cmd.length > 1) {
 					callMethod(inspector, cmd);
 				} else {
-					System.err
-							.println("Correct use of c: c <name> [<value 0> ... <value n>]");
+					System.err.println("Correct use of c: c <name> "
+							+ "[<value 0> ... <value n>]");
 				}
 				break;
 			default:
 				System.err.println("Command not recognized.");
 			}
-
 		}
+	}
+
+	/**
+	 * Parses the input into a String[].
+	 * 
+	 * @param line
+	 *            the input line
+	 * @return the array with the parsed input
+	 * @throws ParseException
+	 */
+	private static String[] parseInputLine(String line) throws ParseException {
+		int length = line.length();
+		boolean inString = false;
+		String s = "";
+		List<String> cmd = new ArrayList<String>();
+
+		for (int i = 0; i < length; i++) {
+			char c = line.charAt(i);
+			if (c == '"') {
+				if (!inString && s == "") {
+					/* Start a new string */
+					inString = true;
+				} else if (inString
+						&& (i + 1 == length || line.charAt(i + 1) == ' ')) {
+					/* Close the string */
+					inString = false;
+				} else {
+					/* Not a string */
+					throw new ParseException(
+							"Error: Can't have characters before opening or after closing a string",
+							i);
+				}
+			} else if (c == '\\' && inString && i + 1 != length
+					&& line.charAt(i + 1) == '"') {
+				/* Add '"' to the string */
+				s += "\"";
+			} else if (inString && i + 1 == length) {
+				throw new ParseException("Error: Missed \" to close string", i);
+			} else if (c != ' ' || inString) {
+				s += c;
+			} else if (s != "") {
+				/* Add value */
+				cmd.add(s);
+				s = "";
+			}
+		}
+		if (s != "") {
+			cmd.add(s);
+		}
+		return cmd.toArray(new String[0]);
 	}
 
 	/**
@@ -63,12 +119,9 @@ public class Console {
 	 */
 	private static boolean isPrimitive(Class<?> type) {
 		return (type == int.class || type == float.class
-				|| type == boolean.class
-				|| type == short.class
-				|| type == long.class
-				|| type == byte.class
-				|| type == char.class
-				|| type == double.class || type == void.class);
+				|| type == boolean.class || type == short.class
+				|| type == long.class || type == byte.class
+				|| type == char.class || type == double.class || type == void.class);
 	}
 
 	/**
@@ -88,7 +141,7 @@ public class Console {
 			if (field == null) {
 				throw new NoSuchFieldException();
 			}
-			
+
 			if (isPrimitive(field.getType())) {
 				System.err.println(field.get(inspector.getObject()));
 			} else {
