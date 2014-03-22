@@ -10,7 +10,18 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class Console.
+ */
 public class Console {
+
+	/**
+	 * Read eval print.
+	 * 
+	 * @param inspector
+	 *            the inspector
+	 */
 	public static void readEvalPrint(Inspector inspector) {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		while (true) {
@@ -27,6 +38,10 @@ public class Console {
 				cmd = parseInputLine(line);
 			} catch (ParseException e) {
 				System.err.println(e.getMessage());
+				continue;
+			}
+			if (cmd.length == 0) {
+				// The user just pressed enter
 				continue;
 			}
 			switch (cmd[0]) {
@@ -55,6 +70,12 @@ public class Console {
 							+ "[<value 0> ... <value n>]");
 				}
 				break;
+			case "next":
+				next(inspector);
+				break;
+			case "prev":
+				prev(inspector);
+				break;
 			default:
 				System.err.println("Command not recognized.");
 			}
@@ -68,6 +89,7 @@ public class Console {
 	 *            the input line
 	 * @return the array with the parsed input
 	 * @throws ParseException
+	 *             the parse exception
 	 */
 	private static String[] parseInputLine(String line) throws ParseException {
 		int length = line.length();
@@ -112,10 +134,11 @@ public class Console {
 	}
 
 	/**
-	 * Check if the given type is primitive or not
+	 * Check if the given type is primitive or not.
 	 * 
 	 * @param type
 	 *            the field to be checked
+	 * @return true, if is primitive
 	 */
 	private static boolean isPrimitive(Class<?> type) {
 		return (type == int.class || type == float.class
@@ -126,7 +149,7 @@ public class Console {
 
 	/**
 	 * Inspects the field of the object and makes it the current inspected
-	 * object as long as its type is not primitive
+	 * object as long as its type is not primitive.
 	 * 
 	 * @param inspector
 	 *            inspector the inspector that contains the object to be
@@ -146,7 +169,7 @@ public class Console {
 				System.err.println(field.get(inspector.getObject()));
 			} else {
 				Object object = field.get(inspector.getObject());
-				inspector.setCurrentInspectedObject(object);
+				inspector.addAndSetCurrentInspectedObject(object);
 				inspector.printInspection();
 			}
 		} catch (NoSuchFieldException e) {
@@ -231,9 +254,10 @@ public class Console {
 						System.err.println(result);
 					} else {
 						Object currentObject = inspector.getObject();
-						inspector.setCurrentInspectedObject(result);
+						inspector.addAndSetCurrentInspectedObject(result);
 						inspector.printInspection();
-						inspector.setCurrentInspectedObject(currentObject);
+						inspector
+								.addAndSetCurrentInspectedObject(currentObject);
 					}
 				}
 			} catch (IllegalAccessException e) {
@@ -295,6 +319,34 @@ public class Console {
 		} catch (IllegalAccessException e) {
 			System.err.println("Error: Illegal access while accessing "
 					+ fieldName);
+		}
+	}
+
+	/**
+	 * Next. Go to the next object in the graph of inspected objects.
+	 * 
+	 * @param inspector
+	 *            the inspector
+	 */
+	private static void next(Inspector inspector) {
+		if (inspector.goToNextObject()) {
+			inspector.printInspection();
+		} else {
+			System.err.println("You are already inspecting the last object");
+		}
+	}
+
+	/**
+	 * Prev.Go to the previous object in the graph of inspected objects.
+	 * 
+	 * @param inspector
+	 *            the inspector
+	 */
+	private static void prev(Inspector inspector) {
+		if (inspector.goToPreviousObject()) {
+			inspector.printInspection();
+		} else {
+			System.err.println("You are already inspecting the first object");
 		}
 	}
 }

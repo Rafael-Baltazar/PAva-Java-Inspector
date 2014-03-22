@@ -3,7 +3,9 @@ package ist.meic.pa;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -14,22 +16,94 @@ import java.util.Map;
  */
 public class Inspector {
 
+	/** The object. */
 	private Object object;
+
+	/** The object fields. */
 	private Map<String, Field> objectFields;
+
+	/*
+	 * Allow to navigate back and forth in the graph of inspected objects
+	 */
+	/** The current inspected object index. */
+	private int currentInspectedObjectIndex;
+
+	/** The inspected objects. */
+	private List<Object> inspectedObjects;
 
 	/**
 	 * Instantiates a new inspector.
 	 */
 	public Inspector() {
+		this.objectFields = new HashMap<String, Field>();
+		this.inspectedObjects = new ArrayList<Object>();
+		this.currentInspectedObjectIndex = 0;
 	}
 
+	/**
+	 * Gets the object.
+	 * 
+	 * @return the object
+	 */
 	public Object getObject() {
 		return object;
 	}
 
-	public void setCurrentInspectedObject(Object object) {
+	/**
+	 * Adds the and set current inspected object.
+	 * 
+	 * @param object
+	 *            the object
+	 */
+	public void addAndSetCurrentInspectedObject(Object object) {
+		setCurrentInspectedObject(object);
+		this.inspectedObjects.add(object);
+		this.currentInspectedObjectIndex = this.inspectedObjects.size() - 1;
+	}
+
+	/**
+	 * Sets the current inspected object.
+	 * 
+	 * @param object
+	 *            the new current inspected object
+	 */
+	private void setCurrentInspectedObject(Object object) {
 		this.object = object;
 		this.objectFields = getAllInstanceFields(object);
+	}
+
+	/**
+	 * Go to the previous object in the graph of inspected objects.
+	 * 
+	 * @return true, if successful
+	 */
+	public boolean goToPreviousObject() {
+		if (this.currentInspectedObjectIndex > 0) {
+			this.currentInspectedObjectIndex--;
+			Object object = this.inspectedObjects
+					.get(this.currentInspectedObjectIndex);
+			setCurrentInspectedObject(object);
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	/**
+	 * Go to next object in the graph of inspected objects.
+	 * 
+	 * @return true, if successful
+	 */
+	public boolean goToNextObject() {
+		if (this.currentInspectedObjectIndex < (this.inspectedObjects.size() - 1)) {
+			this.currentInspectedObjectIndex++;
+			Object object = this.inspectedObjects
+					.get(this.currentInspectedObjectIndex);
+			setCurrentInspectedObject(object);
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	/**
@@ -42,7 +116,7 @@ public class Inspector {
 	 *            the object
 	 */
 	public void inspect(Object object) {
-		setCurrentInspectedObject(object);
+		addAndSetCurrentInspectedObject(object);
 
 		printInspection();
 
@@ -73,6 +147,21 @@ public class Inspector {
 		}
 	}
 
+	/**
+	 * Gets the field by name.
+	 * 
+	 * @param fieldName
+	 *            the field name
+	 * @return the field by name
+	 * @throws NoSuchFieldException
+	 *             the no such field exception
+	 * @throws SecurityException
+	 *             the security exception
+	 * @throws IllegalArgumentException
+	 *             the illegal argument exception
+	 * @throws IllegalAccessException
+	 *             the illegal access exception
+	 */
 	public Field getFieldByName(String fieldName) throws NoSuchFieldException,
 			SecurityException, IllegalArgumentException, IllegalAccessException {
 		return this.objectFields.get(fieldName);
@@ -96,6 +185,17 @@ public class Inspector {
 			return null;
 	}
 
+	/**
+	 * Inspect field.
+	 * 
+	 * @param field
+	 *            the field
+	 * @return the string
+	 * @throws IllegalArgumentException
+	 *             the illegal argument exception
+	 * @throws IllegalAccessException
+	 *             the illegal access exception
+	 */
 	public String inspectField(Field field) throws IllegalArgumentException,
 			IllegalAccessException {
 		field.setAccessible(true);
@@ -109,6 +209,13 @@ public class Inspector {
 				+ fieldName + " = " + fieldValue;
 	}
 
+	/**
+	 * Gets the all instance fields.
+	 * 
+	 * @param object
+	 *            the object
+	 * @return the all instance fields
+	 */
 	private Map<String, Field> getAllInstanceFields(Object object) {
 		Map<String, Field> fields = new HashMap<String, Field>();
 
