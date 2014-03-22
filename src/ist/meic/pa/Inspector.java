@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+// TODO: Auto-generated Javadoc
 /**
  * The Class Inspector. Can be started from any point of a Java program,
  * accepting as argument an object that should be inspected. The inspector must
@@ -31,12 +32,19 @@ public class Inspector {
 	/** The inspected objects. */
 	private List<Object> inspectedObjects;
 
+	/*
+	 * Allow to save inspected objects
+	 */
+	/** The saved objects. */
+	private Map<String, Object> savedObjects;
+
 	/**
 	 * Instantiates a new inspector.
 	 */
 	public Inspector() {
 		this.objectFields = new HashMap<String, Field>();
 		this.inspectedObjects = new ArrayList<Object>();
+		this.savedObjects = new HashMap<String, Object>();
 		this.currentInspectedObjectIndex = 0;
 	}
 
@@ -104,6 +112,16 @@ public class Inspector {
 		} else {
 			return false;
 		}
+	}
+
+	/**
+	 * Save current inspected object with a given name.
+	 * 
+	 * @param name
+	 *            the name that will be given to the current inspected object
+	 */
+	public void saveCurrentInspectedObject(String name) {
+		this.savedObjects.put(name, this.object);
 	}
 
 	/**

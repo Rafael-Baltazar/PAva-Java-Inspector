@@ -76,6 +76,13 @@ public class Console {
 			case "prev":
 				prev(inspector);
 				break;
+			case "save":
+				if (cmd.length == 2) {
+					saveCurrentInspectedObject(inspector, cmd[1]);
+				} else {
+					System.err.println("Correct use of save: save <name>");
+				}
+				break;
 			default:
 				System.err.println("Command not recognized.");
 			}
@@ -348,5 +355,18 @@ public class Console {
 		} else {
 			System.err.println("You are already inspecting the first object");
 		}
+	}
+
+	/**
+	 * Save current inspected object.
+	 * 
+	 * @param inspector
+	 *            the inspector
+	 * @param name
+	 *            the name
+	 */
+	private static void saveCurrentInspectedObject(Inspector inspector,
+			String name) {
+		inspector.saveCurrentInspectedObject(name);
 	}
 }
