@@ -166,19 +166,13 @@ public class Inspector {
 	}
 	
 	public void printMethods() {
-		for(Method m : this.object.getClass().getDeclaredMethods()) {
-			String method = this.getModifierString(m.getModifiers());
-			method += " " + m.getReturnType();
-			method += " " + m.getName();
-			method += "(";
-			for(Type t : m.getParameterTypes()) {
-				method += t.toString() + ",";
+		Class<? extends Object> c = object.getClass();
+		//what if it is of class Object???
+		while(c != Object.class) {
+			for (Method m : c.getDeclaredMethods()) {
+				System.err.println(m);
 			}
-			if(method.charAt(method.length()-1) == ',') {
-				method = method.substring(0, method.length()-1);
-			}
-			method += ")";
-			System.err.println(method);
+			c = c.getSuperclass();
 		}
 	}
 
