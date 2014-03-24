@@ -10,7 +10,6 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class Console.
  */
@@ -70,7 +69,7 @@ public class Console {
 							+ "[<value 0> ... <value n>]");
 				}
 				break;
-			case "methods": 
+			case "methods":
 				inspector.printMethods();
 				break;
 			case "next":
@@ -132,13 +131,27 @@ public class Console {
 			} else if (c != ' ' || inString) {
 				s += c;
 			} else if (s != "") {
+				try {
+					Integer.parseInt(s);
+					s = "i" + s;
+				} catch (NumberFormatException e) {
+					// not an integer
+				}
 				/* Add value */
 				cmd.add(s);
 				s = "";
 			}
 		}
 		if (s != "") {
+			try {
+				Integer.parseInt(s);
+				s = "i" + s;
+			} catch (NumberFormatException e) {
+				// not an integer
+			}
+			/* Add value */
 			cmd.add(s);
+			s = "";
 		}
 		return cmd.toArray(new String[0]);
 	}

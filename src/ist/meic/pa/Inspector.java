@@ -9,7 +9,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class Inspector. Can be started from any point of a Java program,
  * accepting as argument an object that should be inspected. The inspector must
