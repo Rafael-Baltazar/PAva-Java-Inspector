@@ -3,7 +3,6 @@ package ist.meic.pa;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -164,15 +163,21 @@ public class Inspector {
 			}
 		}
 	}
-	
+
+	/**
+	 * Prints the signature of all methods that belong to the class of the
+	 * current inspected object.
+	 */
 	public void printMethods() {
 		Class<? extends Object> c = object.getClass();
-		//what if it is of class Object???
-		while(c != Object.class) {
+		// what if it is of class Object???
+		while (c != null) {
 			for (Method m : c.getDeclaredMethods()) {
 				System.err.println(m);
 			}
-			c = c.getSuperclass();
+			if((c = c.getSuperclass()) == Object.class) {
+				break;
+			}
 		}
 	}
 
