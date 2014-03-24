@@ -3,6 +3,7 @@ package ist.meic.pa;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -162,6 +163,23 @@ public class Inspector {
 				System.err.println("Error: Illegal access at inspecting field "
 						+ f.getName());
 			}
+		}
+	}
+	
+	public void printMethods() {
+		for(Method m : this.object.getClass().getDeclaredMethods()) {
+			String method = this.getModifierString(m.getModifiers());
+			method += " " + m.getReturnType();
+			method += " " + m.getName();
+			method += "(";
+			for(Type t : m.getParameterTypes()) {
+				method += t.toString() + ",";
+			}
+			if(method.charAt(method.length()-1) == ',') {
+				method = method.substring(0, method.length()-1);
+			}
+			method += ")";
+			System.err.println(method);
 		}
 	}
 

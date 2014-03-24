@@ -70,6 +70,9 @@ public class Console {
 							+ "[<value 0> ... <value n>]");
 				}
 				break;
+			case "methods": 
+				inspector.printMethods();
+				break;
 			case "next":
 				next(inspector);
 				break;

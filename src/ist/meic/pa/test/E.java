@@ -8,4 +8,8 @@ public class E extends B {
 	public int g(int h) {
 		return d + h;
 	}
+	
+	public String s(String g, String gg, String ggg) {
+		return g + gg + ggg;
+	}
 }
