@@ -264,9 +264,18 @@ public class Console {
 					parameterTypes.add(int.class);
 				}
 			} catch (NumberFormatException e) {
-				System.err.println("Error: Could not parse the parameter "
+				//Try to use a saved object
+				value = inspector.getSavedObject(str);
+				
+				if(value == null) {
+					System.err.println("Error: Could not parse the parameter "
 						+ str.substring(0, typeIndex));
-				return;
+					return;
+				}
+				else {
+					parameterTypes.add(value.getClass());
+				}
+				
 			}
 			args.add(value);
 		}
