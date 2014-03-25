@@ -65,6 +65,8 @@ public class Console {
 					System.err.println("Correct use of c: c <name> "
 							+ "[<value 0> ... <value n>]");
 				}
+			} else if (cmd[0].equals("help")) {
+				consoleHelp();
 			} else if (cmd[0].equals("methods")) {
 				inspector.printMethods();
 			} else if (cmd[0].equals("next")) {
@@ -399,5 +401,21 @@ public class Console {
 	private static void saveCurrentInspectedObject(Inspector inspector,
 			String name) {
 		inspector.saveCurrentInspectedObject(name);
+	}
+
+	private static void consoleHelp() {
+		System.err.println("------------------");
+		System.err.println("| Java Inspector |");
+		System.err.println("------------------");
+		System.err.println("Available commands and usage:");
+		System.err.println("i <field-name>               - inspects the field with the given name of the current inspected object");
+		System.err.println("m <field-name> <new-value>   - modifies the value of a given field of the current inspected object");
+		System.err.println("c <method-name> [parameters] - calls the method with the given name of the current inspected object using any parameters given");
+		System.err.println("methods                      - shows all the available methods of the current inspected object");
+		System.err.println("next                         - jumps to the next inspected object in the graph of objects, if it exists");
+		System.err.println("prev                         - jumps to the previous inspected object in the graph of objects, if it exists");
+		System.err.println("save <object-name>           - saves the current inspected object with the given name");
+		System.err.println("help                         - brings up the help menu");
+		System.err.println("q                            - terminates the application");
 	}
 }
