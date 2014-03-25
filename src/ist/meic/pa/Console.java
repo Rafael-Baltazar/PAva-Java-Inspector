@@ -90,7 +90,6 @@ public class Console {
 	 *            the input line
 	 * @return the array with the parsed input
 	 * @throws ParseException
-	 *             the parse exception
 	 */
 	private static String[] parseInputLine(String line) throws ParseException {
 		int length = line.length();
@@ -100,58 +99,57 @@ public class Console {
 
 		for (int i = 0; i < length; i++) {
 			char c = line.charAt(i);
-			if (c == '"') {
-				if (!inString && s == "") {
-					/* Start a new string */
-					inString = true;
-					s += c;
-				} else if (inString
-						&& (i + 1 == length || line.charAt(i + 1) == ' ')) {
-					/* Close the string */
-					inString = false;
-					s += c;
+			if (inString) {
+				if (c == '"') {
+					/* show error or close string */
+					if ((i != length - 1) && !isWhiteSpace(line.charAt(i + 1))) {
+						throw new ParseException(
+								"Cannot have characters after closing a string.",
+								i);
+					} else {
+						s += c;
+						inString = false;
+					}
+				} else if (i == length - 1) {
+					throw new ParseException("Didn't close string", i);
+				} else if ((c == '\\') && (line.charAt(i + 1) == '"')) {
+					/* add '"' to string */
+					s += '"';
+					i++;
 				} else {
-					/* Not a string */
-					throw new ParseException(
-							"Error: Can't have characters before opening or after closing a string",
-							i);
+					s += c;
 				}
-			} else if (c == '\\' && inString && i + 1 != length
-					&& line.charAt(i + 1) == '"') {
-				/* Add '"' to the string */
-				s += "\"";
-			} else if (inString && i + 1 == length) {
-				throw new ParseException("Error: Missed \" to close string", i);
-			} else if (c != ' ' || inString) {
-				s += c;
-			} else if (!s.equals("")) {
-				// try {
-				// Integer.parseInt(s);
-				// if (cmd.get(0).equals("c")) {
-				// s = "i" + s;
-				// }
-				// } catch (NumberFormatException e) {
-				// // not an integer
-				// }
-				/* Add value */
-				cmd.add(s);
-				s = "";
+			} /* not in String */
+			else {
+				if (c == '"') {
+					/* show error or open string */
+					if ((i != 0) && !isWhiteSpace(line.charAt(i - 1))) {
+						throw new ParseException(
+								"Cannot open string, if the value already has characters.",
+								i);
+					} else {
+						s += c;
+						inString = true;
+					}
+				} else if (isWhiteSpace(c) && (!s.equals(""))) {
+					/* add s, if it isn't the empty string */
+					cmd.add(s);
+					s = "";
+				} else if (!isWhiteSpace(c)) {
+					s += c;
+				}
 			}
 		}
 		if (!s.equals("")) {
-			// try {
-			// Integer.parseInt(s);
-			// if (cmd.get(0).equals("c")) {
-			// s = "i" + s;
-			// }
-			// } catch (NumberFormatException e) {
-			// // not an integer
-			// }
-			/* Add value */
+			/* Add the final value */
 			cmd.add(s);
 			s = "";
 		}
 		return cmd.toArray(new String[0]);
+	}
+
+	private static boolean isWhiteSpace(char c) {
+		return Character.isWhitespace(c);
 	}
 
 	/**
@@ -262,18 +260,17 @@ public class Console {
 					parameterTypes.add(int.class);
 				}
 			} catch (NumberFormatException e) {
-				//Try to use a saved object
+				// Try to use a saved object
 				value = inspector.getSavedObject(str);
-				
-				if(value == null) {
+
+				if (value == null) {
 					System.err.println("Error: Could not parse the parameter "
-						+ str.substring(0, typeIndex));
+							+ str.substring(0, typeIndex));
 					return;
-				}
-				else {
+				} else {
 					parameterTypes.add(value.getClass());
 				}
-				
+
 			}
 			args.add(value);
 		}
