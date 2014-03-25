@@ -12,4 +12,12 @@ public class E extends B {
 	public String s(String g, String gg, String ggg) {
 		return g + gg + ggg;
 	}
+	
+	public int f(int a) {
+		return a + 10;
+	}
+	
+	public boolean b(boolean bo) {
+		return !bo;
+	}
 }
