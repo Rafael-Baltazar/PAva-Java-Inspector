@@ -69,6 +69,8 @@ public class Console {
 				consoleHelp();
 			} else if (cmd[0].equals("methods")) {
 				inspector.printMethods();
+			} else if (cmd[0].equals("fields")) {
+				inspector.printFields();
 			} else if (cmd[0].equals("next")) {
 				next(inspector);
 			} else if (cmd[0].equals("prev")) {
@@ -418,6 +420,7 @@ public class Console {
 		System.err.println("m <field-name> <new-value>   - modifies the value of a given field of the current inspected object");
 		System.err.println("c <method-name> [parameters] - calls the method with the given name of the current inspected object using any parameters given");
 		System.err.println("methods                      - shows all the available methods of the current inspected object");
+		System.err.println("fields                       - shows all the available fields of the current inspected object");
 		System.err.println("next                         - jumps to the next inspected object in the graph of objects, if it exists");
 		System.err.println("prev                         - jumps to the previous inspected object in the graph of objects, if it exists");
 		System.err.println("save <object-name>           - saves the current inspected object with the given name");

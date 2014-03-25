@@ -188,6 +188,23 @@ public class Inspector {
 			}
 		}
 	}
+	
+	/**
+	 * Prints the signature of all methods that belong to the class of the
+	 * current inspected object.
+	 */
+	public void printFields() {
+		for (Field f : objectFields.values()) {
+			try {
+				f.setAccessible(true);
+				System.err.println(f + " = " + f.get(object));
+			} catch (IllegalArgumentException e) {
+				System.err.println("Error: Illegal argument while accessing " + f.getName());
+			} catch (IllegalAccessException e) {
+				System.err.println("Error: Illegal access on " + f.getName());
+			}
+		}
+	}	
 
 	/**
 	 * Gets the field by name.
