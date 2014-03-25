@@ -125,14 +125,14 @@ public class Console {
 			} else if (c != ' ' || inString) {
 				s += c;
 			} else if (!s.equals("")) {
-//				try {
-//					Integer.parseInt(s);
-//					if (cmd.get(0).equals("c")) {
-//						s = "i" + s;
-//					}
-//				} catch (NumberFormatException e) {
-//					// not an integer
-//				}
+				// try {
+				// Integer.parseInt(s);
+				// if (cmd.get(0).equals("c")) {
+				// s = "i" + s;
+				// }
+				// } catch (NumberFormatException e) {
+				// // not an integer
+				// }
 				/* Add value */
 				cmd.add(s);
 				s = "";
@@ -225,41 +225,45 @@ public class Console {
 		for (int i = 2; i < cmd.length; i++) {
 			String str = cmd[i];
 			Object value = null;
+			int typeIndex = str.length() - 1;
 			try {
-				if (str.charAt(0) == 'b') {
-					value = Byte.parseByte(str.substring(1));
+				if (str.charAt(typeIndex) == 'b') {
+					value = Byte.parseByte(str.substring(0, typeIndex));
 					parameterTypes.add(byte.class);
-				} else if (str.charAt(0) == 's') {
-					value = Short.parseShort(str.substring(1));
+				} else if (str.charAt(typeIndex) == 's') {
+					value = Short.parseShort(str.substring(0, typeIndex));
 					parameterTypes.add(short.class);
-				} else if (str.charAt(0) == 'i') {
-					value = Integer.parseInt(str.substring(1));
+				} else if (str.charAt(typeIndex) == 'i') {
+					value = Integer.parseInt(str.substring(0, typeIndex));
 					parameterTypes.add(int.class);
-				} else if (str.charAt(0) == 'l') {
-					value = Long.parseLong(str.substring(1));
+				} else if (str.charAt(typeIndex) == 'l') {
+					value = Long.parseLong(str.substring(0, typeIndex));
 					parameterTypes.add(long.class);
-				} else if (str.charAt(0) == 'f') {
-					value = Float.parseFloat(str.substring(1));
+				} else if (str.charAt(typeIndex) == 'f') {
+					value = Float.parseFloat(str.substring(0, typeIndex));
 					parameterTypes.add(float.class);
-				} else if (str.charAt(0) == 'd') {
-					value = Double.parseDouble(str.substring(1));
+				} else if (str.charAt(typeIndex) == 'd') {
+					value = Double.parseDouble(str.substring(0, typeIndex));
 					parameterTypes.add(double.class);
-				} else if (str.charAt(0) == 'f') {
-					value = Boolean.parseBoolean(str.substring(1));
+				} else if (str.charAt(typeIndex) == 'B') {
+					value = Boolean.parseBoolean(str.substring(0, typeIndex));
 					parameterTypes.add(boolean.class);
-				} else if (str.charAt(0) == '\'') {
+				} else if (str.charAt(typeIndex) == '\'') {
 					value = str.charAt(1);
 					parameterTypes.add(char.class);
-				} else if (str.charAt(0) == '"') {
+				} else if (str.charAt(typeIndex) == '"') {
 					value = str.substring(1, str.length() - 1);
 					parameterTypes.add(String.class);
+				} else if (str.equals("true") || str.equals("false")) {
+					value = Boolean.parseBoolean(str);
+					parameterTypes.add(boolean.class);
 				} else {
 					value = Integer.parseInt(str);
 					parameterTypes.add(int.class);
 				}
 			} catch (NumberFormatException e) {
 				System.err.println("Error: Could not parse the parameter "
-						+ str.substring(1));
+						+ str.substring(0, typeIndex));
 				return;
 			}
 			args.add(value);
