@@ -122,6 +122,10 @@ public class Inspector {
 	public void saveCurrentInspectedObject(String name) {
 		this.savedObjects.put(name, this.object);
 	}
+	
+	public Object getSavedObject(String name) {
+		return this.savedObjects.get(name);
+	}
 
 	/**
 	 * Presents all the relevant features of the object, namely: The class of

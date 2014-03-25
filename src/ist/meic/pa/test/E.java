@@ -20,4 +20,8 @@ public class E extends B {
 	public boolean b(boolean bo) {
 		return !bo;
 	}
+	
+	public String e(E instance) {
+		return "success";
+	}
 }
