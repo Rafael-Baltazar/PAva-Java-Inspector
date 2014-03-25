@@ -43,49 +43,41 @@ public class Console {
 				// The user just pressed enter
 				continue;
 			}
-			switch (cmd[0]) {
-			case "q":
+			if (cmd[0].equals("q")) {
 				return;
-			case "i":
+			} else if (cmd[0].equals("i")) {
 				if (cmd.length == 2) {
 					inspectField(inspector, cmd);
 				} else {
 					System.err.println("Correct use of i: i <name>");
 				}
-				break;
-			case "m":
+			} else if (cmd[0].equals("m")) {
 				if (cmd.length == 3) {
 					modifyField(inspector, cmd);
 					inspector.printInspection();
 				} else {
 					System.err.println("Correct use of m: m <name> <value>");
 				}
-				break;
-			case "c":
+			} else if (cmd[0].equals("c")) {
 				if (cmd.length > 1) {
 					callMethod(inspector, cmd);
 				} else {
 					System.err.println("Correct use of c: c <name> "
 							+ "[<value 0> ... <value n>]");
 				}
-				break;
-			case "methods":
+			} else if (cmd[0].equals("methods")) {
 				inspector.printMethods();
-				break;
-			case "next":
+			} else if (cmd[0].equals("next")) {
 				next(inspector);
-				break;
-			case "prev":
+			} else if (cmd[0].equals("prev")) {
 				prev(inspector);
-				break;
-			case "save":
+			} else if (cmd[0].equals("save")) {
 				if (cmd.length == 2) {
 					saveCurrentInspectedObject(inspector, cmd[1]);
 				} else {
 					System.err.println("Correct use of save: save <name>");
 				}
-				break;
-			default:
+			} else {
 				System.err.println("Command not recognized.");
 			}
 		}
@@ -132,29 +124,29 @@ public class Console {
 				throw new ParseException("Error: Missed \" to close string", i);
 			} else if (c != ' ' || inString) {
 				s += c;
-			} else if (s != "") {
-				try {
-					Integer.parseInt(s);
-					if(cmd.get(0).equals("c")) {
-						s = "i" + s;
-					}
-				} catch (NumberFormatException e) {
-					// not an integer
-				}
+			} else if (!s.equals("")) {
+//				try {
+//					Integer.parseInt(s);
+//					if (cmd.get(0).equals("c")) {
+//						s = "i" + s;
+//					}
+//				} catch (NumberFormatException e) {
+//					// not an integer
+//				}
 				/* Add value */
 				cmd.add(s);
 				s = "";
 			}
 		}
-		if (s != "") {
-			try {
-				Integer.parseInt(s);
-				if(cmd.get(0).equals("c")) {
-					s = "i" + s;
-				}
-			} catch (NumberFormatException e) {
-				// not an integer
-			}
+		if (!s.equals("")) {
+			// try {
+			// Integer.parseInt(s);
+			// if (cmd.get(0).equals("c")) {
+			// s = "i" + s;
+			// }
+			// } catch (NumberFormatException e) {
+			// // not an integer
+			// }
 			/* Add value */
 			cmd.add(s);
 			s = "";
@@ -259,11 +251,15 @@ public class Console {
 					value = str.charAt(1);
 					parameterTypes.add(char.class);
 				} else if (str.charAt(0) == '"') {
-					value = str.substring(1, str.length()-1);
+					value = str.substring(1, str.length() - 1);
 					parameterTypes.add(String.class);
+				} else {
+					value = Integer.parseInt(str);
+					parameterTypes.add(int.class);
 				}
 			} catch (NumberFormatException e) {
-				System.err.println("Error: Could not parse the parameter " + str.substring(1));
+				System.err.println("Error: Could not parse the parameter "
+						+ str.substring(1));
 				return;
 			}
 			args.add(value);
@@ -330,7 +326,8 @@ public class Console {
 			Field field = inspector.getFieldByName(fieldName);
 			if (field == null)
 				throw new NoSuchFieldException();
-			else field.setAccessible(true);
+			else
+				field.setAccessible(true);
 			/* Check which type to parse the value to */
 			if (field.getType() == boolean.class) {
 				field.set(inspector.getObject(), Boolean.parseBoolean(newValue));
