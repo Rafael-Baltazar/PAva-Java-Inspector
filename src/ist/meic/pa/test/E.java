@@ -5,9 +5,8 @@ public class E extends B {
 	
 	public static long i = 10L;
 	
-	public void g(int h) {
-		d = h;
-		return;
+	public double g(float h) {
+		return h;
 	}
 	
 	public String s(String g, String gg, String ggg) {

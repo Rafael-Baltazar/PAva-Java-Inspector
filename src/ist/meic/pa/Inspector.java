@@ -126,13 +126,18 @@ public class Inspector {
 	/**
 	 * Presents all the relevant features of the object, namely: The class of
 	 * the object; The name, type and current value of each of the object's
-	 * fields; Plus other features we deemed important. Then provides a simple
-	 * read-eval-print interface for further inspection.
+	 * fields; Then provides a simple read-eval-print interface for further
+	 * inspection.
 	 * 
 	 * @param object
 	 *            the object
 	 */
 	public void inspect(Object object) {
+		if (object == null) {
+			System.err.println("Object inexistant.");
+			return;
+		}
+		
 		addAndSetCurrentInspectedObject(object);
 
 		printInspection();
@@ -174,7 +179,7 @@ public class Inspector {
 			for (Method m : c.getDeclaredMethods()) {
 				System.err.println(m);
 			}
-			if((c = c.getSuperclass()) == Object.class) {
+			if ((c = c.getSuperclass()) == Object.class) {
 				break;
 			}
 		}
