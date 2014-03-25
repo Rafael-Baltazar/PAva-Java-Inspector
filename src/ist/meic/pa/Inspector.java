@@ -170,7 +170,6 @@ public class Inspector {
 	 */
 	public void printMethods() {
 		Class<? extends Object> c = object.getClass();
-		// what if it is of class Object???
 		while (c != null) {
 			for (Method m : c.getDeclaredMethods()) {
 				System.err.println(m);

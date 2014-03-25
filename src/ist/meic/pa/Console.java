@@ -112,10 +112,12 @@ public class Console {
 				if (!inString && s == "") {
 					/* Start a new string */
 					inString = true;
+					s += c;
 				} else if (inString
 						&& (i + 1 == length || line.charAt(i + 1) == ' ')) {
 					/* Close the string */
 					inString = false;
+					s += c;
 				} else {
 					/* Not a string */
 					throw new ParseException(
@@ -133,7 +135,9 @@ public class Console {
 			} else if (s != "") {
 				try {
 					Integer.parseInt(s);
-					s = "i" + s;
+					if(cmd.get(0).equals("c")) {
+						s = "i" + s;
+					}
 				} catch (NumberFormatException e) {
 					// not an integer
 				}
@@ -145,7 +149,9 @@ public class Console {
 		if (s != "") {
 			try {
 				Integer.parseInt(s);
-				s = "i" + s;
+				if(cmd.get(0).equals("c")) {
+					s = "i" + s;
+				}
 			} catch (NumberFormatException e) {
 				// not an integer
 			}
@@ -227,33 +233,38 @@ public class Console {
 		for (int i = 2; i < cmd.length; i++) {
 			String str = cmd[i];
 			Object value = null;
-			if (str.charAt(0) == 'b') {
-				value = Byte.parseByte(str.substring(1));
-				parameterTypes.add(byte.class);
-			} else if (str.charAt(0) == 's') {
-				value = Short.parseShort(str.substring(1));
-				parameterTypes.add(short.class);
-			} else if (str.charAt(0) == 'i') {
-				value = Integer.parseInt(str.substring(1));
-				parameterTypes.add(int.class);
-			} else if (str.charAt(0) == 'l') {
-				value = Long.parseLong(str.substring(1));
-				parameterTypes.add(long.class);
-			} else if (str.charAt(0) == 'f') {
-				value = Float.parseFloat(str.substring(1));
-				parameterTypes.add(float.class);
-			} else if (str.charAt(0) == 'd') {
-				value = Double.parseDouble(str.substring(1));
-				parameterTypes.add(double.class);
-			} else if (str.charAt(0) == 'f') {
-				value = Boolean.parseBoolean(str.substring(1));
-				parameterTypes.add(boolean.class);
-			} else if (str.charAt(0) == '\'') {
-				value = str.charAt(1);
-				parameterTypes.add(char.class);
-			} else {
-				value = str;
-				parameterTypes.add(String.class);
+			try {
+				if (str.charAt(0) == 'b') {
+					value = Byte.parseByte(str.substring(1));
+					parameterTypes.add(byte.class);
+				} else if (str.charAt(0) == 's') {
+					value = Short.parseShort(str.substring(1));
+					parameterTypes.add(short.class);
+				} else if (str.charAt(0) == 'i') {
+					value = Integer.parseInt(str.substring(1));
+					parameterTypes.add(int.class);
+				} else if (str.charAt(0) == 'l') {
+					value = Long.parseLong(str.substring(1));
+					parameterTypes.add(long.class);
+				} else if (str.charAt(0) == 'f') {
+					value = Float.parseFloat(str.substring(1));
+					parameterTypes.add(float.class);
+				} else if (str.charAt(0) == 'd') {
+					value = Double.parseDouble(str.substring(1));
+					parameterTypes.add(double.class);
+				} else if (str.charAt(0) == 'f') {
+					value = Boolean.parseBoolean(str.substring(1));
+					parameterTypes.add(boolean.class);
+				} else if (str.charAt(0) == '\'') {
+					value = str.charAt(1);
+					parameterTypes.add(char.class);
+				} else if (str.charAt(0) == '"') {
+					value = str.substring(1, str.length()-1);
+					parameterTypes.add(String.class);
+				}
+			} catch (NumberFormatException e) {
+				System.err.println("Error: Could not parse the parameter " + str.substring(1));
+				return;
 			}
 			args.add(value);
 		}
@@ -270,12 +281,14 @@ public class Console {
 		} else {
 			try {
 				/* Invoke m */
+				m.setAccessible(true);
 				Object result = m.invoke(inspector.getObject(), args.toArray());
 				if (result != null) {
 					/* Print result */
 					if (isPrimitive(m.getReturnType())) {
 						System.err.println(result);
 					} else {
+						System.err.println(result);
 						Object currentObject = inspector.getObject();
 						inspector.addAndSetCurrentInspectedObject(result);
 						inspector.printInspection();
@@ -317,6 +330,7 @@ public class Console {
 			Field field = inspector.getFieldByName(fieldName);
 			if (field == null)
 				throw new NoSuchFieldException();
+			else field.setAccessible(true);
 			/* Check which type to parse the value to */
 			if (field.getType() == boolean.class) {
 				field.set(inspector.getObject(), Boolean.parseBoolean(newValue));
