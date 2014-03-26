@@ -3,6 +3,8 @@ package ist.meic.pa.test;
 public class E extends B {
 	byte f = 0;
 	
+	public String bee = null;
+	
 	public static long i = 10L;
 	
 	public double g(float h) {

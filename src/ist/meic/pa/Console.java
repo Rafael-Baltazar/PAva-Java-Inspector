@@ -71,6 +71,15 @@ public class Console {
 				inspector.printMethods();
 			} else if (cmd[0].equals("fields")) {
 				inspector.printFields();
+			} else if (cmd[0].equals("objects")) {
+				inspector.printSavedObjects();
+			} else if (cmd[0].equals("inspect")) {
+				if(cmd.length == 2) {
+					inspectSavedObject(inspector, cmd);
+				}
+				else {
+					System.err.println("Correct use of inspect: inspect <object-name>");
+				}
 			} else if (cmd[0].equals("next")) {
 				next(inspector);
 			} else if (cmd[0].equals("prev")) {
@@ -238,7 +247,7 @@ public class Console {
 				} else if (str.charAt(typeIndex) == 'i') {
 					value = Integer.parseInt(str.substring(0, typeIndex));
 					parameterTypes.add(int.class);
-				} else if (str.charAt(typeIndex) == 'l') {
+				} else if (str.charAt(typeIndex) == 'L') {
 					value = Long.parseLong(str.substring(0, typeIndex));
 					parameterTypes.add(long.class);
 				} else if (str.charAt(typeIndex) == 'f') {
@@ -299,11 +308,8 @@ public class Console {
 						System.err.println(result);
 					} else {
 						System.err.println(result);
-						Object currentObject = inspector.getObject();
 						inspector.addAndSetCurrentInspectedObject(result);
 						inspector.printInspection();
-						inspector
-								.addAndSetCurrentInspectedObject(currentObject);
 					}
 				}
 			} catch (IllegalAccessException e) {
@@ -410,7 +416,22 @@ public class Console {
 			String name) {
 		inspector.saveCurrentInspectedObject(name);
 	}
+	
+	private static void inspectSavedObject(Inspector inspector, String cmd[]) {
+		String objectName = cmd[1];
+		Object object = inspector.getSavedObject(objectName);
+		if(object == null) {
+			System.err.println("Error: There is no saved object with name " + objectName);
+		}
+		else {
+			inspector.setCurrentInspectedObject(object);
+			inspector.printInspection();
+		}
+	}
 
+	/**
+	 * Prints the help for the console.
+	 */
 	private static void consoleHelp() {
 		System.err.println("------------------");
 		System.err.println("| Java Inspector |");
@@ -428,18 +449,20 @@ public class Console {
 		System.err.println("\t\t\t\t b - byte");
 		System.err.println("\t\t\t\t s - short");
 		System.err.println("\t\t\t\t i - int");
-		System.err.println("\t\t\t\t l - long");
+		System.err.println("\t\t\t\t L - long");
 		System.err.println("\t\t\t\t f - float");
 		System.err.println("\t\t\t\t d - double");
 		System.err.println("\t\t\t\t B - boolean");
 		System.err.println("\t\t The <value> and <type> combination needs to make sense");
 		System.err.println("\t\t So, for instance, a float with value 3.14 is just 3.14f");
 		System.err.println("\t\t But, if you try 3.14l it will not make sense because you cannot assign 3.14 to a long");
+		System.err.println("save <object-name>           - saves the current inspected object with the given name");
+		System.err.println("inspect <object-name>        - inspects the saved object with the given name");
+		System.err.println("objects                      - shows all the previously saved objects");
 		System.err.println("methods                      - shows all the available methods of the current inspected object");
 		System.err.println("fields                       - shows all the available fields of the current inspected object");
 		System.err.println("next                         - jumps to the next inspected object in the graph of objects, if it exists");
 		System.err.println("prev                         - jumps to the previous inspected object in the graph of objects, if it exists");
-		System.err.println("save <object-name>           - saves the current inspected object with the given name");
 		System.err.println("help                         - brings up the help menu");
 		System.err.println("q                            - terminates the application");
 	}

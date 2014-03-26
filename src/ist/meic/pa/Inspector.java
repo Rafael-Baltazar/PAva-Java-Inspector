@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  * The Class Inspector. Can be started from any point of a Java program,
@@ -63,9 +64,14 @@ public class Inspector {
 	 *            the object
 	 */
 	public void addAndSetCurrentInspectedObject(Object object) {
-		setCurrentInspectedObject(object);
-		this.inspectedObjects.add(object);
-		this.currentInspectedObjectIndex = this.inspectedObjects.size() - 1;
+		if(object == null) {
+			System.err.println("Error: cannot inspect objects with <null> value.");
+		}
+		else {
+			setCurrentInspectedObject(object);
+			this.inspectedObjects.add(object);
+			this.currentInspectedObjectIndex = this.inspectedObjects.size() - 1;
+		}
 	}
 
 	/**
@@ -74,7 +80,7 @@ public class Inspector {
 	 * @param object
 	 *            the new current inspected object
 	 */
-	private void setCurrentInspectedObject(Object object) {
+	public void setCurrentInspectedObject(Object object) {
 		this.object = object;
 		this.objectFields = getAllInstanceFields(object);
 	}
@@ -173,6 +179,17 @@ public class Inspector {
 		}
 	}
 
+	public void printSavedObjects() {
+		if(savedObjects.isEmpty()) {
+			System.err.println("You have no saved objects.");
+			return;
+		}
+		System.err.println("Saved Objects: ");
+		for(Entry<String, Object> e : savedObjects.entrySet()) {
+			System.err.println(e.getKey() + " - " + e.getValue().getClass().getName());
+		}
+	}
+	
 	/**
 	 * Prints the signature of all methods that belong to the class of the
 	 * current inspected object.
@@ -262,8 +279,13 @@ public class Inspector {
 		String modifier = getModifierString(field.getModifiers());
 		String fieldType = field.getType().getName();
 		String fieldName = field.getName();
-		String fieldValue = field.get(this.object).toString();
-
+		String fieldValue = "";
+		if(field.get(this.object) == null) {
+			fieldValue = "<null>";
+		}
+		else {
+			fieldValue = field.get(this.object).toString();
+		}
 		return (modifier == null ? "" : (modifier + " ")) + fieldType + " "
 				+ fieldName + " = " + fieldValue;
 	}
