@@ -7,6 +7,7 @@ import java.util.List;
 
 import ist.meic.pa.Console;
 import ist.meic.pa.Inspector;
+import ist.meic.pa.Parameter;
 import ist.meic.pa.parsers.IntegerParser;
 
 public class CallMethodCommand extends Command {

@@ -1,7 +1,6 @@
 package ist.meic.pa;
 
 import ist.meic.pa.commands.Command;
-import ist.meic.pa.commands.Parameter;
 import ist.meic.pa.parsers.ParameterParser;
 
 import java.io.BufferedReader;

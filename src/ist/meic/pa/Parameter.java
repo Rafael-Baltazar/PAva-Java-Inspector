@@ -1,4 +1,4 @@
-package ist.meic.pa.commands;
+package ist.meic.pa;
 
 public class Parameter {
 	

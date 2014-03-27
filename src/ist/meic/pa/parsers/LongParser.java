@@ -1,6 +1,6 @@
 package ist.meic.pa.parsers;
 
-import ist.meic.pa.commands.Parameter;
+import ist.meic.pa.Parameter;
 
 public class LongParser extends ParameterParser {
 
