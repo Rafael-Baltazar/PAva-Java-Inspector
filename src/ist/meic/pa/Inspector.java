@@ -152,7 +152,8 @@ public class Inspector {
 
 		printInspection();
 
-		Console.readEvalPrint(this);
+		//new Console(this).readEvalPrint();
+		ConsoleBootstrap.bootstrap(new Console(this));
 	}
 
 	/**
