@@ -1,15 +1,14 @@
 package ist.meic.pa;
 
 import ist.meic.pa.commands.Command;
+import ist.meic.pa.parsers.InputLineParser;
 import ist.meic.pa.parsers.ParameterParser;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.text.ParseException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -87,7 +86,7 @@ public class Console {
 			}
 			String[] cmd = null;
 			try {
-				cmd = parseInputLine(line);
+				cmd = InputLineParser.parseInputLine(line);
 			} catch (ParseException e) {
 				System.err.println(e.getMessage());
 				continue;
@@ -106,83 +105,6 @@ public class Console {
 			}
 
 		}
-	}
-
-	/**
-	 * Parses the input into a String[].
-	 * 
-	 * @param line
-	 *            the input line
-	 * @return the array with the parsed input
-	 * @throws ParseException
-	 *             the parse exception
-	 */
-	private static String[] parseInputLine(String line) throws ParseException {
-		int length = line.length();
-		boolean inString = false;
-		String s = "";
-		List<String> cmd = new ArrayList<String>();
-
-		for (int i = 0; i < length; i++) {
-			char c = line.charAt(i);
-			if (inString) {
-				if (c == '"') {
-					/* show error or close string */
-					if ((i != length - 1) && !isWhiteSpace(line.charAt(i + 1))) {
-						throw new ParseException(
-								"Cannot have characters after closing a string.",
-								i);
-					} else {
-						s += c;
-						inString = false;
-					}
-				} else if (i == length - 1) {
-					throw new ParseException("Didn't close string", i);
-				} else if ((c == '\\') && (line.charAt(i + 1) == '"')) {
-					/* add '"' to string */
-					s += '"';
-					i++;
-				} else {
-					s += c;
-				}
-			} /* not in String */
-			else {
-				if (c == '"') {
-					/* show error or open string */
-					if ((i != 0) && !isWhiteSpace(line.charAt(i - 1))) {
-						throw new ParseException(
-								"Cannot open string, if the value already has characters.",
-								i);
-					} else {
-						s += c;
-						inString = true;
-					}
-				} else if (isWhiteSpace(c) && (!s.equals(""))) {
-					/* add s, if it isn't the empty string */
-					cmd.add(s);
-					s = "";
-				} else if (!isWhiteSpace(c)) {
-					s += c;
-				}
-			}
-		}
-		if (!s.equals("")) {
-			/* Add the final value */
-			cmd.add(s);
-			s = "";
-		}
-		return cmd.toArray(new String[0]);
-	}
-
-	/**
-	 * Checks if is white space.
-	 * 
-	 * @param c
-	 *            the c
-	 * @return true, if is white space
-	 */
-	private static boolean isWhiteSpace(char c) {
-		return Character.isWhitespace(c);
 	}
 
 	/**
