@@ -72,8 +72,10 @@ public class CallMethodCommand extends Command {
 				Object result = m.invoke(inspector.getObject(), args.toArray());
 				if (result != null) {
 					/* Print result */
-					if (isPrimitive(m.getReturnType())) {
+					if(m.getReturnType().isPrimitive()) {
 						System.err.println(result);
+					//if (isPrimitive(m.getReturnType())) {
+						//System.err.println(result);
 					} else {
 						System.err.println(result);
 						inspector.addAndSetCurrentInspectedObject(result);
@@ -94,20 +96,6 @@ public class CallMethodCommand extends Command {
 								+ m.getName());
 			}
 		}
-	}
-
-	/**
-	 * Check if the given type is primitive or not.
-	 * 
-	 * @param type
-	 *            the field to be checked
-	 * @return true, if is primitive
-	 */
-	private static boolean isPrimitive(Class<?> type) {
-		return (type == int.class || type == float.class
-				|| type == boolean.class || type == short.class
-				|| type == long.class || type == byte.class
-				|| type == char.class || type == double.class || type == void.class);
 	}
 
 }

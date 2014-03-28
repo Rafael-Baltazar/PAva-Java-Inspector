@@ -21,6 +21,9 @@ import ist.meic.pa.parsers.LongParser;
 import ist.meic.pa.parsers.ShortParser;
 import ist.meic.pa.parsers.StringParser;
 
+/**
+ * The Class ConsoleBootstrap.
+ */
 public class ConsoleBootstrap {
 
 	public static void bootstrap(Console console) {
@@ -29,6 +32,11 @@ public class ConsoleBootstrap {
 		console.readEvalPrint();
 	}
 
+	/**
+	 * Inits the commands.
+	 *
+	 * @param console the console
+	 */
 	private static void initCommands(Console console) {
 		Inspector inspector = console.getInspector();
 
@@ -45,6 +53,11 @@ public class ConsoleBootstrap {
 		console.addCommand("save", new SaveCommand(inspector, console));
 	}
 	
+	/**
+	 * Inits the parameter parsers.
+	 *
+	 * @param console the console
+	 */
 	private static void initParameterParsers(Console console) {
 		console.addParameterParser("b", new ByteParser());
 		console.addParameterParser("s", new ShortParser());

@@ -38,7 +38,7 @@ public class InspectFieldCommand extends Command {
 				throw new NoSuchFieldException();
 			}
 
-			if (isPrimitive(field.getType())) {
+			if (field.getType().isPrimitive()) {
 				System.err.println(field.get(inspector.getObject()));
 			} else {
 				Object object = field.get(inspector.getObject());
@@ -59,18 +59,4 @@ public class InspectFieldCommand extends Command {
 		}
 	}
 	
-	/**
-	 * Check if the given type is primitive or not.
-	 * 
-	 * @param type
-	 *            the field to be checked
-	 * @return true, if is primitive
-	 */
-	private static boolean isPrimitive(Class<?> type) {
-		return (type == int.class || type == float.class
-				|| type == boolean.class || type == short.class
-				|| type == long.class || type == byte.class
-				|| type == char.class || type == double.class || type == void.class);
-	}
-
 }
