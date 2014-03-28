@@ -4,6 +4,8 @@ import java.lang.reflect.Field;
 
 import ist.meic.pa.Console;
 import ist.meic.pa.Inspector;
+import ist.meic.pa.Parameter;
+import ist.meic.pa.parsers.IntegerParser;
 
 public class ModifyFieldCommand extends Command {
 
@@ -42,19 +44,10 @@ public class ModifyFieldCommand extends Command {
 			else
 				field.setAccessible(true);
 			/* Check which type to parse the value to */
-			if (field.getType() == boolean.class) {
-				field.set(inspector.getObject(), Boolean.parseBoolean(newValue));
-			} else if (field.getType() == int.class) {
-				field.set(inspector.getObject(), Integer.parseInt(newValue));
-			} else if (field.getType() == short.class) {
-				field.set(inspector.getObject(), Short.parseShort(newValue));
-			} else if (field.getType() == long.class) {
-				field.set(inspector.getObject(), Long.parseLong(newValue));
-			} else if (field.getType() == byte.class) {
-				field.set(inspector.getObject(), Byte.parseByte(newValue));
-			} else {
-				field.set(inspector.getObject(), newValue);
-			}
+			Parameter parameter = getConsole().parseParameter(cmd[2],
+					new IntegerParser());
+			field.set(inspector.getObject(), parameter.getValue());
+			
 		} catch (NoSuchFieldException e) {
 			System.err.println("Error: No such field with name " + fieldName);
 		} catch (SecurityException e) {
