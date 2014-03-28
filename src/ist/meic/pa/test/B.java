@@ -8,4 +8,8 @@ public class B {
 	public int g() {
 		return d;
 	}
+	
+	char c(char c) {
+		return c;
+	}
 }
