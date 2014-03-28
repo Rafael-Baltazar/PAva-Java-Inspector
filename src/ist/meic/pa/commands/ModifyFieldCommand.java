@@ -44,7 +44,7 @@ public class ModifyFieldCommand extends Command {
 			else
 				field.setAccessible(true);
 			/* Check which type to parse the value to */
-			Parameter parameter = getConsole().parseParameter(cmd[2],
+			Parameter parameter = getConsole().parseParameter(newValue,
 					new IntegerParser());
 			field.set(inspector.getObject(), parameter.getValue());
 			
